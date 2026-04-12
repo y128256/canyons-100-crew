@@ -594,7 +594,7 @@
             <span class="stop-sub">
               <span class="pill pill-blue">★ Crew</span>
               <span class="pill pill-gold">Drop Bag</span>
-              <span class="pill pill-purple">Nina starts pacing</span>
+              <span class="pill pill-purple">Plan B: Nina starts pacing</span>
               <span class="pill pill-red">Cut-off 8:00 AM</span>
             </span>
           </div>
@@ -602,9 +602,9 @@
         </div>
 
         <div class="card" style="background:rgba(124,92,191,0.1);border-color:rgba(124,92,191,0.3);margin:6px 0 10px;padding:10px 12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--accent2);margin-bottom:4px;">PACING PLANS — AS9</div>
-          <div style="font-size:12px;margin-bottom:3px;"><span style="color:var(--accent2);font-weight:700;">Plan A (moderate):</span> Nina starts ~8:00 AM</div>
-          <div style="font-size:12px;"><span style="color:var(--accent);font-weight:700;">Plan B (fast):</span> Nina starts ~5:00 AM</div>
+          <div style="font-size:11px;font-weight:700;color:var(--accent2);margin-bottom:4px;">PACING PLANS</div>
+          <div style="font-size:12px;margin-bottom:3px;"><span style="color:var(--accent2);font-weight:700;">Plan A (moderate):</span> Nina starts at AS10 ~10:00 AM</div>
+          <div style="font-size:12px;"><span style="color:var(--accent);font-weight:700;">Plan B (fast):</span> Nina starts at AS9 ~6:00 AM</div>
         </div>
 
         <div class="stop-row dropbag pacer">
@@ -614,7 +614,7 @@
             <span class="stop-sub">
               <span class="pill pill-blue">★ Crew</span>
               <span class="pill pill-gold">Drop Bag</span>
-              <span class="pill pill-purple">Nina continues</span>
+              <span class="pill pill-purple">Plan A: Nina starts · Plan B: Nina continues</span>
               <span class="pill pill-red">Cut-off 12:00 PM</span>
             </span>
           </div>
@@ -874,7 +874,7 @@ const todoData = [
       'Refill water and nutrition',
       'Offer warm food / hot drink',
       'Swap layers as needed',
-      'Confirm Plan A (8 AM) or Plan B (5 AM) for AS9 based on pace',
+      'Confirm Plan A (10 AM at AS10) or Plan B (6 AM at AS9) based on pace',
       '★ IMPORTANT: After runner departs → drive DIRECTLY to AS9',
       'Brief Nina on runner\'s condition before AS9',
     ]
@@ -882,10 +882,10 @@ const todoData = [
   {
     id: 'as9',
     label: 'AS9 · Mi 62.9 · Saturday 5–8 AM',
-    sub: 'Cool – 1  |  ★ Required stop  |  Drop Bag  |  Nina starts pacing  |  Cut-off 8:00 AM',
+    sub: 'Cool – 1  |  ★ Required stop  |  Drop Bag  |  Plan B: Nina starts pacing  |  Cut-off 8:00 AM',
     color: '#7c5cbf',
     items: [
-      'Arrive before 5:00 AM (Plan B) or 7:00 AM (Plan A)',
+      'Arrive before 5:30 AM (Plan B) or before runner arrives (Plan A)',
       'Park at St Florian Ct — enter gate, park on LEFT side only',
       'Confirm Plan A vs B based on runner\'s current pace',
       'Locate and pick up runner\'s drop bag',
@@ -895,7 +895,7 @@ const todoData = [
       'Have dry socks, blister kit, change of shoes if needed',
       'Greet runner — full pit stop: feet, food, gear swap',
       'Refill all nutrition and hydration',
-      'Nina joins runner here',
+      'Plan B: Nina joins runner here (Plan A: Nina starts at AS10)',
       'Take photos 📸',
       'After runner + Nina depart → drive to AS10 (Cool 2)',
     ]
@@ -903,7 +903,7 @@ const todoData = [
   {
     id: 'as10',
     label: 'AS10 · Mi 75.1 · Saturday ~10:00 AM',
-    sub: 'Cool – 2  |  ★ Required stop  |  Drop Bag  |  Nina continues  |  Cut-off 12:00 PM',
+    sub: 'Cool – 2  |  ★ Required stop  |  Drop Bag  |  Plan A: Nina starts · Plan B: Nina continues  |  Cut-off 12:00 PM',
     color: '#1e88e5',
     items: [
       'Arrive before 10:00 AM (cut-off 12:00 PM)',
@@ -1061,7 +1061,7 @@ const dropBags = [
   },
   {
     title: 'AS9 / AS10 — Cool  ·  Miles 62.9 & 75.1  ·  ~5–10 AM Saturday',
-    note: 'One bag stays at this location. Accessible at AS9 and again at AS10. Nina starts pacing here.',
+    note: 'One bag stays at this location. Accessible at AS9 and again at AS10. Plan B: Nina starts pacing at AS9. Plan A: Nina starts pacing at AS10.',
     categories: [
       { name: 'Nutrition', items: [
         ['Caffeinated gels', '×6'],
@@ -1181,11 +1181,11 @@ const crewStops = [
     parking: 'St Florian Ct, Cool, CA\n(same parking area as AS9)',
     restrictions: '⛔ NO parking on right side of road past the gate\n⛔ No crew/spectators inside AS',
     walk: 'Short walk from parking to crew area',
-    notes: 'Drop bags available. Nina continues pacing. After, drive toward AS13+ then to Finish.',
+    notes: 'Drop bags available. Plan A: Nina starts pacing here. Plan B: Nina continues pacing. After, drive toward AS13+ then to Finish.',
   },
   {
     name: 'AS13+ — Browns Bar (Nina stops)',
-    mile: '~92–95',
+    mile: '92.3',
     cutoff: '~5:00 PM Saturday',
     parking: 'Browns Bar area — check course signage on race day',
     restrictions: '⚠️ No specific crew parking guidance published\nFollow on-course signage day-of',
