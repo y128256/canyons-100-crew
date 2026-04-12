@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0f1117">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Canyons 100">
+<link rel="manifest" href="manifest.json">
+<title>Canyons 100</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --bg2: #1a1d27;
+    --bg3: #242838;
+    --border: #2e3347;
+    --text: #e8eaf0;
+    --text2: #9ba3bc;
+    --accent: #4d9de0;
+    --accent2: #7c5cbf;
+    --gold: #f0a500;
+    --green: #43a047;
+    --red: #e53935;
+    --orange: #fb8c00;
+    --card-radius: 12px;
+    --nav-h: 64px;
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Layout ────────────────────────────────────── */
+  #app {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+  }
+
+  header {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 16px 10px;
+    padding-top: calc(14px + env(safe-area-inset-top, 0px));
+    flex-shrink: 0;
+  }
+
+  header h1 {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  header h1 span { color: var(--accent); }
+  header p {
+    font-size: 11px;
+    color: var(--text2);
+    margin-top: 2px;
+  }
+
+  main {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  .tab-panel { display: none; padding: 16px; padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + 16px); }
+  .tab-panel.active { display: block; }
+
+  nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    display: flex;
+    height: calc(var(--nav-h) + var(--safe-bottom));
+    padding-bottom: var(--safe-bottom);
+    z-index: 100;
+    flex-shrink: 0;
+  }
+
+  nav button {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--text2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    cursor: pointer;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    transition: color 0.15s;
+    -webkit-tap-highlight-color: transparent;
+    padding-bottom: 4px;
+  }
+  nav button svg { width: 22px; height: 22px; }
+  nav button.active { color: var(--accent); }
+  nav button.active svg path, nav button.active svg rect,
+  nav button.active svg circle, nav button.active svg polyline,
+  nav button.active svg line { stroke: var(--accent); }
+
+  /* ── Cards ─────────────────────────────────────── */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-header h2 {
+    font-size: 14px;
+    font-weight: 700;
+    flex: 1;
+  }
+  .card-header .badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: var(--bg3);
+    color: var(--text2);
+    white-space: nowrap;
+  }
+  .card-body { padding: 12px 14px; }
+
+  /* ── Section headers ────────────────────────────── */
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text2);
+    margin: 20px 0 10px;
+  }
+  .section-title:first-child { margin-top: 0; }
+
+  /* ── Pill / tag ─────────────────────────────────── */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin: 2px;
+  }
+  .pill-blue  { background: rgba(77,157,224,0.18); color: var(--accent); }
+  .pill-gold  { background: rgba(240,165,0,0.18);  color: var(--gold); }
+  .pill-green { background: rgba(67,160,71,0.18);  color: var(--green); }
+  .pill-red   { background: rgba(229,57,53,0.18);  color: var(--red); }
+  .pill-purple{ background: rgba(124,92,191,0.18); color: var(--accent2); }
+  .pill-orange{ background: rgba(251,140,0,0.18);  color: var(--orange); }
+
+  /* ── Timeline ───────────────────────────────────── */
+  .timeline-lane {
+    position: relative;
+    margin-bottom: 6px;
+  }
+  .lane-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text2);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .stops-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .stop-row {
+    display: flex;
+    align-items: center;
+    background: var(--bg3);
+    border-radius: 8px;
+    padding: 8px 10px;
+    gap: 10px;
+    border-left: 3px solid var(--border);
+  }
+  .stop-row.required { border-left-color: var(--accent); }
+  .stop-row.optional { border-left-color: var(--text2); }
+  .stop-row.dropbag  { border-left-color: var(--gold); }
+  .stop-row.pacer    { border-left-color: var(--accent2); }
+  .stop-row.finish   { border-left-color: var(--green); }
+
+  .stop-time {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent);
+    min-width: 72px;
+    white-space: nowrap;
+  }
+  .stop-name { font-size: 13px; font-weight: 600; flex: 1; }
+  .stop-sub  { font-size: 11px; color: var(--text2); }
+  .stop-info { display: flex; flex-direction: column; flex: 1; }
+  .stop-mile {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text2);
+    min-width: 42px;
+    text-align: right;
+  }
+
+  /* day divider */
+  .day-divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 14px 0 10px;
+  }
+  .day-divider span {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--gold);
+    white-space: nowrap;
+  }
+  .day-divider::before, .day-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── AS Chart table ─────────────────────────────── */
+  .as-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .as-table th {
+    background: var(--bg3);
+    color: var(--text2);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 8px 6px;
+    text-align: left;
+    position: sticky;
+    top: 0;
+    white-space: nowrap;
+  }
+  .as-table td {
+    padding: 8px 6px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .as-table tr:last-child td { border-bottom: none; }
+  .as-table tr.crew-stop td { background: rgba(77,157,224,0.06); }
+  .as-table tr.has-cutoff td:nth-child(5) { color: var(--red); font-weight: 700; }
+  .as-table .icon-cell { text-align: center; font-size: 14px; }
+  .as-table tr.water-only td { color: var(--text2); font-style: italic; }
+
+  .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: var(--card-radius); }
+
+  /* ── To-Do Lists ────────────────────────────────── */
+  .todo-station {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .todo-station-header {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .todo-station-header h3 {
+    font-size: 14px;
+    font-weight: 700;
+    flex: 1;
+  }
+  .todo-station-header .progress {
+    font-size: 11px;
+    color: var(--text2);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .todo-station-header .chevron {
+    font-size: 12px;
+    color: var(--text2);
+    transition: transform 0.2s;
+  }
+  .todo-station.open .chevron { transform: rotate(180deg); }
+  .todo-station-sub {
+    font-size: 11px;
+    color: var(--text2);
+    padding: 4px 14px 10px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+    display: none;
+  }
+  .todo-station.open .todo-station-sub { display: block; }
+  .todo-items { display: none; }
+  .todo-station.open .todo-items { display: block; }
+
+  .todo-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.1s;
+  }
+  .todo-item:last-child { border-bottom: none; }
+  .todo-item:active { background: var(--bg3); }
+
+  .todo-check {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+    transition: all 0.15s;
+  }
+  .todo-item.done .todo-check {
+    background: var(--green);
+    border-color: var(--green);
+  }
+  .todo-item.done .todo-check::after {
+    content: '✓';
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .todo-label {
+    font-size: 13px;
+    line-height: 1.4;
+    flex: 1;
+  }
+  .todo-item.done .todo-label {
+    color: var(--text2);
+    text-decoration: line-through;
+  }
+
+  .todo-progress-bar {
+    height: 3px;
+    background: var(--border);
+    overflow: hidden;
+  }
+  .todo-progress-bar-fill {
+    height: 100%;
+    background: var(--green);
+    transition: width 0.3s;
+  }
+
+  .reset-btn {
+    font-size: 11px;
+    color: var(--text2);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px 6px;
+    text-decoration: underline;
+    float: right;
+  }
+
+  /* ── Drop Bag ────────────────────────────────────── */
+  .db-section {
+    margin-bottom: 16px;
+  }
+  .db-section h3 {
+    font-size: 14px;
+    font-weight: 700;
+    padding: 12px 14px;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+  }
+  .db-category {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text2);
+    padding: 10px 14px 4px;
+    background: var(--bg2);
+  }
+  .db-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 7px 14px;
+    gap: 8px;
+    border-bottom: 1px solid rgba(46,51,71,0.5);
+    background: var(--bg2);
+  }
+  .db-item:last-of-type { border-bottom: 1px solid var(--border); }
+  .db-item-name { font-size: 13px; flex: 1; }
+  .db-item-qty { font-size: 12px; color: var(--text2); text-align: right; flex-shrink: 0; max-width: 160px; }
+
+  /* ── Crew Access ─────────────────────────────────── */
+  .crew-rules {
+    background: rgba(229,57,53,0.08);
+    border: 1px solid rgba(229,57,53,0.25);
+    border-radius: var(--card-radius);
+    padding: 12px 14px;
+    margin-bottom: 16px;
+  }
+  .crew-rules h3 {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--red);
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+  }
+  .crew-rule {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+  .crew-rule:last-child { margin-bottom: 0; }
+  .crew-rule-label {
+    font-weight: 700;
+    color: var(--red);
+    min-width: 90px;
+    flex-shrink: 0;
+  }
+
+  .crew-stop-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .crew-stop-header {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg3);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .crew-stop-header h3 { font-size: 14px; font-weight: 700; }
+  .crew-stop-header .cutoff {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--red);
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+  .crew-field {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .crew-field:last-child { border-bottom: none; }
+  .crew-field-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--text2);
+    margin-bottom: 3px;
+  }
+  .crew-field-val { color: var(--text); }
+  .crew-field .warn {
+    color: var(--red);
+    font-size: 11px;
+    margin-top: 3px;
+    line-height: 1.4;
+  }
+  .crew-field .walk { color: var(--gold); font-weight: 600; }
+
+  /* ── Scrollbar ──────────────────────────────────── */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>Canyons <span>100</span></h1>
+    <p>Race Start: Friday May 3 · 12:00 PM · China Wall</p>
+  </header>
+
+  <main id="main">
+    <!-- ═══════════════════ TIMELINE ═══════════════════ -->
+    <section id="tab-timeline" class="tab-panel active">
+      <div class="day-divider"><span>Friday</span></div>
+
+      <div class="stops-list">
+        <div class="stop-row required">
+          <div class="stop-time">12:00 PM</div>
+          <div class="stop-info">
+            <span class="stop-name">Start — China Wall</span>
+            <span class="stop-sub">
+              <span class="pill pill-blue">Crew</span>
+              <span class="pill pill-blue">Runner</span>
+            </span>
+          </div>
+          <div class="stop-mile">Mi 0</div>
+        </div>
+
+        <div class="stop-row required">
+          <div class="stop-time">~6:00 PM</div>
+          <div class="stop-info">
+            <span class="stop-name">AS3 — Michigan Bluff</span>
+            <span class="stop-sub">
+              <span class="pill pill-blue">★ Crew</span>
+              <span class="pill pill-red">Cut-off 7:45 PM</span>
+            </span>
+          </div>
+          <div class="stop-mile">Mi 24</div>
+        </div>
+
+        <div class="stop-row dropbag">
+          <div class="stop-time">~8:00 PM</div>
+          <div class="stop-info">
+            <span class="stop-name">AS4 — Foresthill</span>
+            <span class="stop-sub">
+              <span class="pill pill-blue">★ Crew</span>
+              <span class="pill pill-gold">Drop Bag</span>
+              <span class="pill pill-red">Cut-off 9:30 PM</span>
+            </span>
+          </div>
+          <div class="stop-mile">Mi 30</div>
+        </div>
+      </div>
+
+      <div class="day-divider"><span>Saturday</span></div>
+
+      <div class="stops-list">
+        <div class="stop-row optional">
+          <div class="stop-time">~12:00 AM</div>
+          <div class="stop-info">
+            <span class="stop-name">Optional AS — ~Mi 40</span>
+            <span class="stop-sub">
+              <span class="pill pill-orange">○ Optional Crew</span>
+            </span>
+          </div>
+          <div class="stop-mile">Mi ~40</div>
+        </div>
+
+        <div class="stop-row required">
+          <div class="stop-time">~1:00 AM</div>
+          <div class="stop-info">
+            <span class="stop-name">AS6 — Drivers Flat</span>
+            <span class="stop-sub">
+              <span class="pill pill-blue">★ Crew</span>
+              <span class="pill pill-red">Cut-off 3:00 AM</span>
+              <span class="pill pill-orange">→ Drive to AS9 after</span>
+            </span>
+          </div>
+          <div class="stop-mile">Mi 47.5</div>
+        </div>
+
+        <div class="stop-row dropbag pacer">
+          <div class="stop-time">5–8 AM</div>
+          <div class="stop-info">
+            <span class="stop-name">AS9 — Cool</span>
+            <span class="stop-sub">
+              <span class="pill pill-blue">★ Crew</span>
+              <span class="pill pill-gold">Drop Bag</span>
+              <span class="pill pill-purple">Nina starts pacing</span>
+              <span class="pill pill-red">Cut-off 8:00 AM</span>
+            </span>
+          </div>
+          <div class="stop-mile">Mi 62.9</div>
+        </div>
+
+        <div class="card" style="background:rgba(124,92,191,0.1);border-color:rgba(124,92,191,0.3);margin:6px 0 10px;padding:10px 12px;">
+          <div style="font-size:11px;font-weight:700;color:var(--accent2);margin-bottom:4px;">PACING PLANS — AS9</div>
+          <div style="font-size:12px;margin-bottom:3px;"><span style="color:var(--accent2);font-weight:700;">Plan A (moderate):</span> Nina starts ~8:00 AM</div>
+          <div style="font-size:12px;"><span style="color:var(--accent);font-weight:700;">Plan B (fast):</span> Nina starts ~5:00 AM</div>
+        </div>
+
+        <div class="stop-row dropbag pacer">
+          <div class="stop-time">~10:00 AM</div>
+          <div class="stop-info">
+            <span class="stop-name">AS10 — Cool 2</span>
+            <span class="stop-sub">
+              <span class="pill pill-blue">★ Crew</span>
+              <span class="pill pill-gold">Drop Bag</span>
+              <span class="pill pill-purple">Nina continues</span>
+              <span class="pill pill-red">Cut-off 12:00 PM</span>
+            </span>
+          </div>
+          <div class="stop-mile">Mi 75.1</div>
+        </div>
+
+        <div class="stop-row pacer">
+          <div class="stop-time">~5:00 PM</div>
+          <div class="stop-info">
+            <span class="stop-name">AS13+ — Browns Bar 2</span>
+            <span class="stop-sub">
+              <span class="pill pill-blue">★ Crew</span>
+              <span class="pill pill-purple">Nina stops → drives to finish</span>
+            </span>
+          </div>
+          <div class="stop-mile">Mi 92.3</div>
+        </div>
+
+        <div class="stop-row finish">
+          <div class="stop-time">TBD</div>
+          <div class="stop-info">
+            <span class="stop-name">Finish — Downtown Auburn 🎉</span>
+            <span class="stop-sub">
+              <span class="pill pill-green">Cut-off 11:00 PM Sat</span>
+            </span>
+          </div>
+          <div class="stop-mile">Mi 101.8</div>
+        </div>
+      </div>
+
+      <div class="section-title" style="margin-top:24px;">Drop Bags Summary</div>
+      <div class="card">
+        <div class="card-body">
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="font-size:13px;"><span class="pill pill-gold">AS4</span> Foresthill · Mi 30 · ~8 PM Fri</div>
+            <div style="font-size:13px;"><span class="pill pill-gold">AS9</span> Cool · Mi 62.9 · ~5–8 AM Sat</div>
+            <div style="font-size:13px;"><span class="pill pill-gold">AS10</span> Cool 2 · Mi 75.1 · ~10 AM Sat <span style="font-size:11px;color:var(--text2);">(same physical bag as AS9)</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════ AID STATION CHART ═══════════════════ -->
+    <section id="tab-chart" class="tab-panel">
+      <div class="table-scroll">
+        <table class="as-table">
+          <thead>
+            <tr>
+              <th>Station</th>
+              <th>Location</th>
+              <th>Mi</th>
+              <th>+Gain</th>
+              <th>Cut-Off</th>
+              <th title="Drop Bag">DB</th>
+              <th title="Crew">Crew</th>
+              <th title="Pacer">Pacer</th>
+            </tr>
+          </thead>
+          <tbody id="as-tbody"></tbody>
+        </table>
+      </div>
+      <p style="font-size:10px;color:var(--text2);margin-top:8px;text-align:center;">
+        Elevation gain shown to next station. Crew stops highlighted.
+      </p>
+    </section>
+
+    <!-- ═══════════════════ TO-DO LISTS ═══════════════════ -->
+    <section id="tab-todo" class="tab-panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div style="font-size:12px;color:var(--text2);">Tap a station to expand. Checks save automatically.</div>
+        <button class="reset-btn" onclick="resetAllTodos()">Reset all</button>
+      </div>
+      <div id="todo-container"></div>
+    </section>
+
+    <!-- ═══════════════════ DROP BAG CONTENT ═══════════════════ -->
+    <section id="tab-dropbag" class="tab-panel">
+      <p style="font-size:12px;color:var(--text2);margin-bottom:16px;">3 bags total. AS9 and AS10 share one bag at the same location.</p>
+      <div id="dropbag-container"></div>
+    </section>
+
+    <!-- ═══════════════════ CREW ACCESS ═══════════════════ -->
+    <section id="tab-crew" class="tab-panel">
+      <div id="crew-container"></div>
+    </section>
+  </main>
+
+  <nav id="nav">
+    <button class="active" data-tab="timeline" onclick="switchTab('timeline', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Timeline
+    </button>
+    <button data-tab="chart" onclick="switchTab('chart', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+      AS Chart
+    </button>
+    <button data-tab="todo" onclick="switchTab('todo', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      To-Do
+    </button>
+    <button data-tab="dropbag" onclick="switchTab('dropbag', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      Drop Bags
+    </button>
+    <button data-tab="crew" onclick="switchTab('crew', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Crew
+    </button>
+  </nav>
+</div>
+
+<script>
+// ── Tab switching ────────────────────────────────────
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  document.getElementById('main').scrollTop = 0;
+}
+
+// ══════════════════════════════════════════════════════
+// ── Aid Station Chart Data ────────────────────────────
+// ══════════════════════════════════════════════════════
+const stations = [
+  { label:'Start',  loc:'China Wall',               mi:0,     gain:1787,  loss:-2870,  cumGain:1787,   cumLoss:-2870,   cutoff:null,          db:false, crew:false, pacer:false, type:'normal' },
+  { label:'AS1',   loc:'Deadwood - 1',              mi:10.1,  gain:565,   loss:-124,   cumGain:2352,   cumLoss:-2994,   cutoff:null,          db:false, crew:false, pacer:false, type:'normal' },
+  { label:'HS1',   loc:'Devils Thumb - 1',          mi:12,    gain:0,     loss:-1642,  cumGain:2352,   cumLoss:-4636,   cutoff:null,          db:false, crew:false, pacer:false, type:'water' },
+  { label:'N/A',   loc:'Swinging Bridge Turnaround',mi:13.5,  gain:1642,  loss:0,      cumGain:3994,   cumLoss:-4636,   cutoff:null,          db:false, crew:false, pacer:false, type:'normal' },
+  { label:'HS2',   loc:'Devils Thumb - 2',          mi:15.1,  gain:283,   loss:-724,   cumGain:4277,   cumLoss:-5360,   cutoff:null,          db:false, crew:false, pacer:false, type:'water' },
+  { label:'AS2',   loc:'Deadwood - 2',              mi:18.3,  gain:1774,  loss:-2229,  cumGain:6051,   cumLoss:-7589,   cutoff:'6:30 PM',     db:false, crew:false, pacer:false, type:'normal' },
+  { label:'AS3',   loc:'Michigan Bluff',            mi:24,    gain:1173,  loss:-1367,  cumGain:7224,   cumLoss:-8956,   cutoff:'7:45 PM',     db:false, crew:true,  pacer:false, type:'crew' },
+  { label:'AS4',   loc:'Foresthill',                mi:30,    gain:725,   loss:-2311,  cumGain:7949,   cumLoss:-11267,  cutoff:'9:30 PM',     db:true,  crew:true,  pacer:false, type:'crew' },
+  { label:'AS5',   loc:'Cal 2',                     mi:38.2,  gain:1725,  loss:-1727,  cumGain:9674,   cumLoss:-12994,  cutoff:null,          db:false, crew:false, pacer:false, type:'normal' },
+  { label:'AS6',   loc:'Drivers Flat',              mi:47.5,  gain:984,   loss:-2050,  cumGain:10658,  cumLoss:-15044,  cutoff:'3:00 AM',     db:false, crew:true,  pacer:false, type:'crew' },
+  { label:'AS7',   loc:'Mammoth Bar',               mi:55.5,  gain:679,   loss:-718,   cumGain:11337,  cumLoss:-15762,  cutoff:'5:30 AM',     db:false, crew:false, pacer:false, type:'normal' },
+  { label:'AS8',   loc:'Confluence',                mi:59.1,  gain:189,   loss:-184,   cumGain:11526,  cumLoss:-15946,  cutoff:null,          db:false, crew:false, pacer:false, type:'normal' },
+  { label:'HS3',   loc:'No Hands - 1 (Water Only)', mi:59.9,  gain:1156,  loss:-219,   cumGain:12682,  cumLoss:-16165,  cutoff:null,          db:false, crew:false, pacer:false, type:'water' },
+  { label:'AS9',   loc:'Cool - 1',                  mi:62.9,  gain:70,    loss:-158,   cumGain:12752,  cumLoss:-16323,  cutoff:'8:00 AM',     db:true,  crew:true,  pacer:true,  type:'crew' },
+  { label:'HS4',   loc:'Coffer Dam - 1 (Water)',    mi:64.6,  gain:947,   loss:-947,   cumGain:13699,  cumLoss:-17270,  cutoff:null,          db:false, crew:false, pacer:false, type:'water' },
+  { label:'HS5',   loc:'Coffer Dam - 2 (Water)',    mi:69.1,  gain:708,   loss:-620,   cumGain:14407,  cumLoss:-17890,  cutoff:null,          db:false, crew:false, pacer:false, type:'water' },
+  { label:'AS10',  loc:'Cool - 2',                  mi:75.1,  gain:259,   loss:-1020,  cumGain:14666,  cumLoss:-18910,  cutoff:'12:00 PM',    db:true,  crew:true,  pacer:true,  type:'crew' },
+  { label:'AS11',  loc:'Browns Bar - 1',            mi:79.2,  gain:947,   loss:-261,   cumGain:15613,  cumLoss:-19171,  cutoff:null,          db:false, crew:false, pacer:false, type:'normal' },
+  { label:'AS12',  loc:'ALT',                       mi:84.7,  gain:675,   loss:-1361,  cumGain:16288,  cumLoss:-20532,  cutoff:'3:30 PM',     db:false, crew:false, pacer:false, type:'normal' },
+  { label:'AS13',  loc:'Browns Bar - 2',            mi:92.3,  gain:1009,  loss:-1185,  cumGain:17297,  cumLoss:-21717,  cutoff:null,          db:false, crew:true,  pacer:false, type:'crew' },
+  { label:'HS6',   loc:'No Hands - 2 (Water)',      mi:98.3,  gain:907,   loss:-227,   cumGain:18204,  cumLoss:-21944,  cutoff:null,          db:false, crew:false, pacer:false, type:'water' },
+  { label:'Finish',loc:'Downtown Auburn',           mi:101.8, gain:null,  loss:null,   cumGain:18204,  cumLoss:-21944,  cutoff:'11:00 PM',    db:false, crew:true,  pacer:false, type:'finish' },
+];
+
+function buildASChart() {
+  const tbody = document.getElementById('as-tbody');
+  tbody.innerHTML = stations.map(s => {
+    const cls = s.type === 'crew' ? 'crew-stop' : s.type === 'water' ? 'water-only' : s.type === 'finish' ? 'crew-stop' : '';
+    const gain = s.gain != null ? '+' + s.gain.toLocaleString() : '—';
+    const cutoff = s.cutoff ? `<span style="color:var(--red);font-weight:700">${s.cutoff}</span>` : '—';
+    const db   = s.db    ? '🎒' : '';
+    const crew = s.crew  ? '👥' : '';
+    const pacer= s.pacer ? '🏃' : '';
+    return `<tr class="${cls}">
+      <td><strong>${s.label}</strong></td>
+      <td style="font-size:11px;color:var(--text2)">${s.loc}</td>
+      <td style="font-weight:700">${s.mi}</td>
+      <td style="font-size:12px;color:var(--green)">${gain}</td>
+      <td style="font-size:11px">${cutoff}</td>
+      <td class="icon-cell">${db}</td>
+      <td class="icon-cell">${crew}</td>
+      <td class="icon-cell">${pacer}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════
+// ── To-Do Data ────────────────────────────────────────
+// ══════════════════════════════════════════════════════
+const todoData = [
+  {
+    id: 'start',
+    label: 'Start · Mi 0 · Friday 12:00 PM',
+    sub: 'China Wall  |  Send off runner — crew/spectators NOT allowed at start',
+    color: '#1e88e5',
+    items: [
+      'Arrive at Gold Country Fairgrounds by 11:00 AM',
+      'Final gear check with runner (shoes, pack, poles, headlamp)',
+      'Confirm drop bags packed & labeled (AS4, AS9, AS10)',
+      'Confirm Plan A or Plan B with Nina (pacing start time)',
+      'Exchange contact numbers / agree check-in protocol',
+      'Give runner last-minute nutrition before shuttle',
+      'Send off runner at 12:00 PM 🎉',
+      'Drive directly to AS3 (Michigan Bluff) — arrive before 6:00 PM',
+    ]
+  },
+  {
+    id: 'as3',
+    label: 'AS3 · Mi 24 · Friday ~6:00 PM',
+    sub: 'Michigan Bluff  |  ★ Required crew stop  |  Cut-off 7:45 PM',
+    color: '#1e88e5',
+    items: [
+      'Arrive before 6:00 PM (cut-off 7:45 PM)',
+      'Park on Chicken Hawk Rd — walk ~½ mile to AS',
+      'Set up crew area — lay out supplies',
+      'Prepare: water, electrolytes, real food, snacks',
+      'Have headlamp + extra batteries ready (darkness coming)',
+      'Have a warm layer on hand (temps dropping)',
+      'Greet runner — assess condition (feet, mood, eating)',
+      'Refill hydration pack / bottles',
+      'Offer calories (may not stop long)',
+      'Hand off headlamp / night gear',
+      'Send update to Nina on runner pace & condition',
+      'After runner departs → drive to AS4 (Foresthill)',
+    ]
+  },
+  {
+    id: 'as4',
+    label: 'AS4 · Mi 30 · Friday ~8:00 PM',
+    sub: 'Foresthill  |  ★ Required crew stop  |  Drop Bag  |  Cut-off 9:30 PM',
+    color: '#43a047',
+    items: [
+      'Arrive before 8:00 PM (cut-off 9:30 PM)',
+      'Park on Foresthill Rd/Main St — NOT Church St or school',
+      'Locate and pick up runner\'s drop bag',
+      'Set up crew area with drop bag contents laid out',
+      'Prepare: warm food option (broth, ramen) + snacks',
+      'Have fresh socks / blister kit ready',
+      'Greet runner — assess blisters, stomach, energy',
+      'Swap gear from drop bag as needed',
+      'Refill nutrition and hydration',
+      'Encourage — next big stop is AS6 (~17.5 miles)',
+      'Decide: drive to Optional AS (~mi 40) or straight to AS6',
+    ]
+  },
+  {
+    id: 'opt',
+    label: 'Optional AS · ~Mi 40 · Saturday ~12:00 AM',
+    sub: 'Optional stop  |  Only go if runner needs support or is behind pace',
+    color: '#fb8c00',
+    items: [
+      '(Go only if runner is behind pace or needs support)',
+      'Confirm exact location before race day',
+      'Quick in-and-out: top off water, hand snacks',
+      'Check runner\'s condition — note pace vs Plan A/B',
+      'Communicate updated ETA to Nina for AS9',
+      'After runner departs → drive directly to AS6 (Drivers Flat)',
+    ]
+  },
+  {
+    id: 'as6',
+    label: 'AS6 · Mi 47.5 · Saturday ~1:00 AM',
+    sub: 'Drivers Flat  |  ★ Required crew stop  |  Drive to AS9 after  |  Cut-off 3:00 AM',
+    color: '#e53935',
+    items: [
+      'Arrive before 1:00 AM (cut-off 3:00 AM)',
+      'Park in Foresthill Rd lot (fee) or roadside — walk ½ mile on Drivers Flat Rd',
+      'Set up crew area — middle of the night',
+      'Have warm layers, hot drink (tea/broth), light snacks',
+      'Have extra battery pack / spare headlamp',
+      'Greet runner — mental boost (halfway point!)',
+      'Refill water and nutrition',
+      'Offer warm food / hot drink',
+      'Swap layers as needed',
+      'Confirm Plan A (8 AM) or Plan B (5 AM) for AS9 based on pace',
+      '★ IMPORTANT: After runner departs → drive DIRECTLY to AS9',
+      'Brief Nina on runner\'s condition before AS9',
+    ]
+  },
+  {
+    id: 'as9',
+    label: 'AS9 · Mi 62.9 · Saturday 5–8 AM',
+    sub: 'Cool – 1  |  ★ Required stop  |  Drop Bag  |  Nina starts pacing  |  Cut-off 8:00 AM',
+    color: '#7c5cbf',
+    items: [
+      'Arrive before 5:00 AM (Plan B) or 7:00 AM (Plan A)',
+      'Park at St Florian Ct — enter gate, park on LEFT side only',
+      'Confirm Plan A vs B based on runner\'s current pace',
+      'Locate and pick up runner\'s drop bag',
+      'Set up crew area with drop bag contents staged',
+      'Have Nina suited up, pack ready, briefed on runner condition',
+      'Prepare: daylight food, real food, fresh snacks',
+      'Have dry socks, blister kit, change of shoes if needed',
+      'Greet runner — full pit stop: feet, food, gear swap',
+      'Refill all nutrition and hydration',
+      'Nina joins runner here',
+      'Take photos 📸',
+      'After runner + Nina depart → drive to AS10 (Cool 2)',
+    ]
+  },
+  {
+    id: 'as10',
+    label: 'AS10 · Mi 75.1 · Saturday ~10:00 AM',
+    sub: 'Cool – 2  |  ★ Required stop  |  Drop Bag  |  Nina continues  |  Cut-off 12:00 PM',
+    color: '#1e88e5',
+    items: [
+      'Arrive before 10:00 AM (cut-off 12:00 PM)',
+      'Same parking as AS9 (St Florian Ct)',
+      'Locate and pick up runner\'s drop bag',
+      'Set up crew area — warm sunny morning',
+      'Prepare: savory + sweet options, cold drinks',
+      'Have remaining clothing swaps / spare gear staged',
+      'Greet runner + Nina — check both conditions',
+      'Swap gear from drop bag as needed',
+      'Refill nutrition and hydration for runner AND Nina',
+      'Encourage: only ~27 miles to go!',
+      'Confirm Nina has food/water for next segment',
+      'After they depart → drive toward AS13 (Browns Bar 2)',
+    ]
+  },
+  {
+    id: 'as13',
+    label: 'AS13+ · Mi 92.3 · Saturday ~5:00 PM',
+    sub: 'Browns Bar – 2  |  ★ Required stop  |  Nina stops pacing here',
+    color: '#fb8c00',
+    items: [
+      'Arrive before 5:00 PM',
+      'Set up crew area — almost there!',
+      'Prepare: easy calories, electrolytes, comfort food',
+      'Greet runner + Nina — final big stop',
+      'Top off runner\'s nutrition / water (~6–8 miles left)',
+      'Nina stops pacing here — thank her! 🙏',
+      'Give runner massive pep talk (finish is close!)',
+      '★ Nina drives directly to FINISH LINE',
+      'Crew departs to set up at finish area',
+    ]
+  },
+  {
+    id: 'finish',
+    label: 'Finish · ~Mi 101.8 · Saturday TBD',
+    sub: 'Downtown Auburn  |  Cut-off 11:00 PM Saturday  |  High St & Lewis St',
+    color: '#43a047',
+    items: [
+      'Arrive at finish well before runner\'s estimated time',
+      'Coordinate with Nina — confirm she is in position',
+      'Have dry warm clothes ready (change for runner)',
+      'Have recovery food + cold drink waiting',
+      'Have blanket / chair for runner post-finish',
+      'Have camera / phone fully charged 📸',
+      'Cheer runner across the FINISH LINE! 🎉',
+      'Medal, finisher gear, photos',
+      'Help runner change, eat, and get warm',
+      'Arrange transportation home',
+    ]
+  },
+];
+
+function buildTodos() {
+  const container = document.getElementById('todo-container');
+  container.innerHTML = todoData.map(stn => {
+    const done = getChecked(stn.id);
+    const total = stn.items.length;
+    const count = done.filter(Boolean).length;
+    const pct = total ? Math.round(count / total * 100) : 0;
+    const items = stn.items.map((task, i) => {
+      const checked = done[i];
+      return `<div class="todo-item${checked ? ' done' : ''}" onclick="toggleTodo('${stn.id}',${i},this)">
+        <div class="todo-check"></div>
+        <div class="todo-label">${task}</div>
+      </div>`;
+    }).join('');
+    return `<div class="todo-station${count > 0 && count < total ? ' open' : ''}" id="ts-${stn.id}">
+      <div class="todo-progress-bar"><div class="todo-progress-bar-fill" style="width:${pct}%"></div></div>
+      <div class="todo-station-header" onclick="toggleStation('${stn.id}')">
+        <div style="width:10px;height:10px;border-radius:50%;background:${stn.color};flex-shrink:0"></div>
+        <h3>${stn.label}</h3>
+        <div class="progress">${count}/${total}</div>
+        <div class="chevron">▼</div>
+      </div>
+      <div class="todo-station-sub">${stn.sub}</div>
+      <div class="todo-items">${items}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleStation(id) {
+  document.getElementById('ts-' + id).classList.toggle('open');
+}
+
+function getChecked(id) {
+  try { return JSON.parse(localStorage.getItem('todo-' + id)) || []; } catch { return []; }
+}
+function saveChecked(id, arr) {
+  localStorage.setItem('todo-' + id, JSON.stringify(arr));
+}
+
+function toggleTodo(id, idx, el) {
+  const arr = getChecked(id);
+  arr[idx] = !arr[idx];
+  saveChecked(id, arr);
+  el.classList.toggle('done');
+  updateProgress(id);
+}
+
+function updateProgress(id) {
+  const stn = todoData.find(s => s.id === id);
+  const done = getChecked(id);
+  const count = done.filter(Boolean).length;
+  const total = stn.items.length;
+  const pct = Math.round(count / total * 100);
+  const card = document.getElementById('ts-' + id);
+  card.querySelector('.progress').textContent = count + '/' + total;
+  card.querySelector('.todo-progress-bar-fill').style.width = pct + '%';
+}
+
+function resetAllTodos() {
+  if (!confirm('Reset all to-do checkboxes?')) return;
+  todoData.forEach(s => localStorage.removeItem('todo-' + s.id));
+  buildTodos();
+}
+
+// ══════════════════════════════════════════════════════
+// ── Drop Bag Data ─────────────────────────────────────
+// ══════════════════════════════════════════════════════
+const dropBags = [
+  {
+    title: 'AS4 — Foresthill  ·  Mile 30  ·  ~8 PM Friday',
+    note: '',
+    categories: [
+      { name: 'Nutrition', items: [
+        ['Caffeinated gels', '×6  (night section ahead — stay alert)'],
+        ['Regular gels', '×4'],
+        ['Salt / electrolyte caps', '×20  (e.g. Precision Hydration S1500)'],
+        ['Real food — wrap, rice ball, boiled potato', 'small bag, salted'],
+        ['Chews / blocks', '×2 packs  (backup nutrition)'],
+        ['Caffeine pills (200 mg)', '×3  (save for low moments)'],
+      ]},
+      { name: 'Gear', items: [
+        ['Headlamp (fully charged)', 'primary — must have at dusk'],
+        ['Spare headlamp batteries', 'AA or AAA per your model'],
+        ['Backup headlamp', 'small and light'],
+        ['Light jacket / wind shell', 'temps drop sharply at night'],
+        ['Gloves', 'liner weight is fine'],
+        ['Long-sleeve shirt', '×1'],
+        ['Fresh socks', '×1 pair  (wool preferred, e.g. Darn Tough)'],
+      ]},
+      { name: 'Feet & Skin', items: [
+        ['Blister kit', 'needle, Leukotape, gauze, alcohol wipes'],
+        ['Anti-chafe (Body Glide / Squirrel\'s Nut Butter)', 'reapply hot spots'],
+        ['Foot powder', 'optional but nice'],
+      ]},
+      { name: 'Medical', items: [
+        ['Ibuprofen', '×4 tabs  (take with food)'],
+        ['Tylenol / acetaminophen', '×4 tabs  (alternate with ibuprofen)'],
+        ['Tums / antacids', 'nausea prevention'],
+        ['Zofran', '×2 tabs  (if nausea hits hard)'],
+      ]},
+    ]
+  },
+  {
+    title: 'AS9 / AS10 — Cool  ·  Miles 62.9 & 75.1  ·  ~5–10 AM Saturday',
+    note: 'One bag stays at this location. Accessible at AS9 and again at AS10. Nina starts pacing here.',
+    categories: [
+      { name: 'Nutrition', items: [
+        ['Caffeinated gels', '×6'],
+        ['Regular gels', '×4'],
+        ['Salt / electrolyte caps', '×20'],
+        ['Real food — rice balls, boiled potato, broth', 'morning fuel — savory preferred'],
+        ['Chews / blocks', '×2 packs'],
+        ['Caffeine pills (200 mg)', '×3  (second-half backup)'],
+      ]},
+      { name: 'Gear', items: [
+        ['Fresh socks', '×2 pairs  (1 for AS9, 1 for AS10)'],
+        ['Fresh shirt', '×1  (morale boost at mile 63)'],
+        ['Sunscreen', 'daylight by now'],
+        ['Sunglasses', 'needed by AS10 at minimum'],
+        ['Light long-sleeve', 'morning chill — easy layer to shed'],
+        ['Trekking poles', 'optional — helpful for 2nd-half climbs'],
+      ]},
+      { name: 'Feet & Skin', items: [
+        ['Full blister kit', 'needle, Leukotape, gauze, alcohol wipes'],
+        ['Anti-chafe', 'reapply thoroughly'],
+        ['Baby wipes', '×5  (clean up, freshen up)'],
+      ]},
+      { name: 'Medical', items: [
+        ['Ibuprofen', '×6 tabs'],
+        ['Tylenol / acetaminophen', '×6 tabs'],
+        ['Tums / antacids', ''],
+        ['Zofran', '×2 tabs'],
+      ]},
+      { name: 'Misc', items: [
+        ['Phone charger / battery pack', 'top off if using phone for navigation'],
+        ['Note from crew', 'motivation note for mile 63! ❤️'],
+      ]},
+    ]
+  },
+];
+
+function buildDropBags() {
+  const container = document.getElementById('dropbag-container');
+  container.innerHTML = dropBags.map(bag => `
+    <div class="card db-section">
+      <div class="db-section h3" style="font-size:14px;font-weight:700;padding:12px 14px;background:var(--bg3);border-bottom:1px solid var(--border)">${bag.title}</div>
+      ${bag.note ? `<div style="font-size:11px;color:var(--text2);padding:8px 14px;background:var(--bg2);border-bottom:1px solid var(--border);font-style:italic">${bag.note}</div>` : ''}
+      ${bag.categories.map(cat => `
+        <div class="db-category">${cat.name}</div>
+        ${cat.items.map(([name, qty]) => `
+          <div class="db-item">
+            <div class="db-item-name">${name}</div>
+            ${qty ? `<div class="db-item-qty">${qty}</div>` : ''}
+          </div>
+        `).join('')}
+      `).join('')}
+    </div>
+  `).join('');
+}
+
+// ══════════════════════════════════════════════════════
+// ── Crew Access Data ──────────────────────────────────
+// ══════════════════════════════════════════════════════
+const crewRules = [
+  ['Crew zones only', 'Stay in designated crew areas. DO NOT run alongside your runner inside crew zones.'],
+  ['No-crew stations', 'STRICTLY NO CREW at: Deadwood, Devils Thumb, Cal 2 (→ DQ!), Mammoth Bar, Confluence, Browns Bar, ALT.'],
+  ['No overnight parking', 'No overnight parking or camping at ANY event location. Violations → towing + possible runner disqualification.'],
+  ['China Wall start', 'NO parking, no drop-off, no spectators at China Wall. Runners take shuttle from Gold Country Fairgrounds.'],
+  ['Command Center', 'Emergency / DNF: 813-422-2094  (also on runner bib)'],
+];
+
+const crewStops = [
+  {
+    name: 'Start — China Wall',
+    mile: '0',
+    cutoff: '12:00 PM Friday',
+    parking: 'Gold Country Fairgrounds · 209 Fairgate Rd, Auburn, CA 95603\nRunners take shuttle to start (crew does NOT go to start)',
+    restrictions: '⛔ NO parking at China Wall\n⛔ NO crew/spectators at start\n⛔ Shuttle is runners-only',
+    walk: 'N/A',
+    notes: 'Send off runner at Basecamp (expo area) before they board the shuttle. Drive directly to AS3 afterward.',
+  },
+  {
+    name: 'AS3 — Michigan Bluff',
+    mile: '24',
+    cutoff: '7:45 PM Friday',
+    parking: 'Chicken Hawk Rd (both directions from intersection with Michigan Bluff Rd)',
+    restrictions: '⛔ NO parking on Michigan Bluff Rd\n⛔ NO parking beyond Michigan Bluff Rd & Chicken Hawk Rd intersection',
+    walk: '~½ mile walk in',
+    notes: 'Arrive early — road fills up fast. Walk ~½ mile to aid station.',
+  },
+  {
+    name: 'AS4 — Foresthill',
+    mile: '30',
+    cutoff: '9:30 PM Friday',
+    parking: 'Park on Foresthill Rd / Main St area (away from Church St & school)',
+    restrictions: '⛔ NO parking on Church St\n⛔ NO parking in front of businesses/residences\n⛔ NO parking at Foresthill Elementary School\n⚠️ Violations → runner DISQUALIFICATION',
+    walk: 'Short walk to AS',
+    notes: 'Arrive early & carpool. Park close to next car. Respect residents (late night). Violations will be reported.',
+  },
+  {
+    name: 'AS6 — Drivers Flat',
+    mile: '47.5',
+    cutoff: '3:00 AM Saturday',
+    parking: 'Option 1: Foresthill Rd parking lot (fee)\nOption 2: Roadside along Foresthill Rd (free)',
+    restrictions: '⛔ NO parking on Drivers Flat Rd\n⛔ NO parking at/near staging area\n⛔ No waiting/idling at AS',
+    walk: '~½ mile walk on Drivers Flat Rd',
+    notes: 'Fee lot is closer. Roadside is free but longer walk. No vehicle access to staging area.',
+  },
+  {
+    name: 'AS9 — Cool (+ Pacers)',
+    mile: '62.9',
+    cutoff: '8:00 AM Saturday',
+    parking: 'St Florian Ct, Cool, CA\nEnter through open gate — park on LEFT side only',
+    restrictions: '⛔ NO parking on right side of road past the gate\n⛔ No crew/spectators inside the AS itself',
+    walk: 'Short walk from parking to crew area',
+    notes: 'Drop bags here. Nina (pacer) must sign waiver & get bib before joining runner. Confirm this before race day.',
+  },
+  {
+    name: 'AS10 — Cool 2 (+ Pacers)',
+    mile: '75.1',
+    cutoff: '12:00 PM Saturday',
+    parking: 'St Florian Ct, Cool, CA\n(same parking area as AS9)',
+    restrictions: '⛔ NO parking on right side of road past the gate\n⛔ No crew/spectators inside AS',
+    walk: 'Short walk from parking to crew area',
+    notes: 'Drop bags available. Nina continues pacing. After, drive toward AS13+ then to Finish.',
+  },
+  {
+    name: 'AS13+ — Browns Bar (Nina stops)',
+    mile: '~92–95',
+    cutoff: '~5:00 PM Saturday',
+    parking: 'Browns Bar area — check course signage on race day',
+    restrictions: '⚠️ No specific crew parking guidance published\nFollow on-course signage day-of',
+    walk: 'TBD',
+    notes: 'Nina stops pacing here and drives directly to the Finish line in Downtown Auburn.',
+  },
+  {
+    name: 'Finish — Downtown Auburn',
+    mile: '101.8',
+    cutoff: '11:00 PM Saturday',
+    parking: 'Option 1: Gold Country Fairgrounds → shuttle to downtown\nOption 2: Park downtown (follow local rules)',
+    restrictions: '⚠️ Follow all local parking times & rules\n⚠️ No overnight parking',
+    walk: 'Shuttle or short walk to finish',
+    notes: 'Finish line: High St & Lewis St, Downtown Auburn. After 10 PM, shuttle drop-off moves to Basecamp entrance on High St.',
+  },
+];
+
+function buildCrew() {
+  const container = document.getElementById('crew-container');
+  let html = `<div class="crew-rules">
+    <h3>⚠ GENERAL CREW RULES</h3>
+    ${crewRules.map(([label, text]) => `
+      <div class="crew-rule">
+        <span class="crew-rule-label">${label}</span>
+        <span>${text}</span>
+      </div>
+    `).join('')}
+  </div>`;
+
+  html += crewStops.map(s => `
+    <div class="crew-stop-card">
+      <div class="crew-stop-header">
+        <div>
+          <h3>${s.name}</h3>
+          <div style="font-size:11px;color:var(--text2);margin-top:2px">Mile ${s.mile}</div>
+        </div>
+        <div class="cutoff">Cut-off<br>${s.cutoff}</div>
+      </div>
+      <div class="crew-field">
+        <div class="crew-field-label">Parking</div>
+        <div class="crew-field-val" style="white-space:pre-line">${s.parking}</div>
+      </div>
+      <div class="crew-field">
+        <div class="crew-field-label">Walk to AS</div>
+        <div class="crew-field-val walk">${s.walk}</div>
+      </div>
+      <div class="crew-field">
+        <div class="crew-field-label">Restrictions</div>
+        <div class="crew-field-val warn" style="white-space:pre-line">${s.restrictions}</div>
+      </div>
+      <div class="crew-field">
+        <div class="crew-field-label">Notes</div>
+        <div class="crew-field-val">${s.notes}</div>
+      </div>
+    </div>
+  `).join('');
+
+  container.innerHTML = html;
+}
+
+// ── Init ─────────────────────────────────────────────
+buildASChart();
+buildTodos();
+buildDropBags();
+buildCrew();
+
+// ── Service Worker ───────────────────────────────────
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "Canyons 100 Race Guide",
+  "short_name": "Canyons 100",
+  "description": "Crew, pacer & runner guide for Canyons 100 ultramarathon",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f1117",
+  "theme_color": "#1e88e5",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
