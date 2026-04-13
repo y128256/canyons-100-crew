@@ -690,28 +690,6 @@
     <section id="tab-crew" class="tab-panel">
       <div id="crew-container"></div>
     </section>
-
-    <!-- ═══════════════════ RACE DAY REFERENCE ═══════════════════ -->
-    <section id="tab-rdr" class="tab-panel">
-      <div style="font-size:11px;color:var(--text2);margin-bottom:12px;">★ = Required crew stop &nbsp;·&nbsp; ○ = Optional &nbsp;·&nbsp; ✓ DB = Drop bag pre-placed</div>
-      <div style="overflow-x:auto;">
-        <table style="width:100%;border-collapse:collapse;font-size:12px;">
-          <thead>
-            <tr style="background:rgba(77,157,224,0.12);">
-              <th style="text-align:left;padding:7px 8px;border-bottom:1px solid rgba(255,255,255,0.1);white-space:nowrap;">Aid Station</th>
-              <th style="text-align:center;padding:7px 6px;border-bottom:1px solid rgba(255,255,255,0.1);">Mi</th>
-              <th style="text-align:center;padding:7px 6px;border-bottom:1px solid rgba(255,255,255,0.1);white-space:nowrap;">Est. Arrival</th>
-              <th style="text-align:center;padding:7px 6px;border-bottom:1px solid rgba(255,255,255,0.1);">Day</th>
-              <th style="text-align:center;padding:7px 6px;border-bottom:1px solid rgba(255,255,255,0.1);">Crew</th>
-              <th style="text-align:center;padding:7px 6px;border-bottom:1px solid rgba(255,255,255,0.1);">DB</th>
-              <th style="text-align:left;padding:7px 6px;border-bottom:1px solid rgba(255,255,255,0.1);">Action</th>
-            </tr>
-          </thead>
-          <tbody id="rdr-body"></tbody>
-        </table>
-      </div>
-      <div style="margin-top:16px;" id="rdr-pacer"></div>
-    </section>
   </main>
 
   <nav id="nav">
@@ -734,10 +712,6 @@
     <button data-tab="crew" onclick="switchTab('crew', this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       Crew
-    </button>
-    <button data-tab="rdr" onclick="switchTab('rdr', this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-      Reference
     </button>
   </nav>
 </div>
@@ -1181,45 +1155,11 @@ function buildCrew() {
   container.innerHTML = html;
 }
 
-// ══════════════════════════════════════════════════════
-// ── Race Day Reference Data & Builder ────────────────
-// ══════════════════════════════════════════════════════
-const rdrRows = [
-  { as:'Start',        mi:0,      arrival:'12:00 PM', day:'Friday',        crew:'✓', db:'—', action:'Send off runner' },
-  { as:'AS3',          mi:24,     arrival:'7:00 PM',  day:'Friday',        crew:'✓', db:'—', action:'Required crew stop' },
-  { as:'AS4',          mi:30,     arrival:'9:00 PM',  day:'Friday',        crew:'✓', db:'✓', action:'Required crew stop' },
-  { as:'AS6',          mi:47.5,   arrival:'2:00 AM',  day:'Saturday',      crew:'✓', db:'—', action:'Drive → AS9 after' },
-  { as:'AS9',          mi:62.9,   arrival:'7:00 AM',  day:'Saturday',      crew:'✓', db:'✓', action:'Required; Pacer starts here (Plan B only)' },
-  { as:'AS10',         mi:75.1,   arrival:'11:00 AM', day:'Saturday',      crew:'✓', db:'✓', action:'Required; Pacer starts here (Plan A) or continues (Plan B)' },
-  { as:'AS13+',        mi:92.3,   arrival:'~6:00 PM', day:'Saturday',      crew:'✓', db:'—', action:'Pacer stops pacing → drives to finish' },
-  { as:'Finish',       mi:'~101.8',arrival:'TBD',     day:'Saturday',      crew:'✓', db:'—', action:'🎉' },
-];
-
-function buildRDR() {
-  const body = document.getElementById('rdr-body');
-  body.innerHTML = rdrRows.map((r, i) => {
-    const isFinish = r.as === 'FINISH';
-    const isOptional = r.crew === '○';
-    const hasDB = r.db !== '—';
-    const rowBg = isFinish ? 'rgba(67,160,71,0.1)' : isOptional ? 'rgba(251,140,0,0.08)' : hasDB ? 'rgba(255,193,7,0.07)' : i % 2 === 0 ? 'rgba(255,255,255,0.02)' : '';
-    return `<tr style="background:${rowBg};border-bottom:1px solid rgba(255,255,255,0.05);">
-      <td style="padding:8px 8px;font-weight:600;font-size:12px;">${r.as}</td>
-      <td style="padding:8px 6px;text-align:center;color:var(--text2);">${r.mi}</td>
-      <td style="padding:8px 6px;text-align:center;white-space:nowrap;font-weight:600;">${r.arrival}</td>
-      <td style="padding:8px 6px;text-align:center;color:var(--text2);font-size:11px;white-space:nowrap;">${r.day}</td>
-      <td style="padding:8px 6px;text-align:center;">${r.crew}</td>
-      <td style="padding:8px 6px;text-align:center;color:${hasDB ? '#ffc107' : 'var(--text2)'};">${r.db}</td>
-      <td style="padding:8px 6px;font-size:11px;color:var(--text2);">${r.action}</td>
-    </tr>`;
-  }).join('');
-}
-
 // ── Init ─────────────────────────────────────────────
 buildASChart();
 buildTodos();
 buildDropBags();
 buildCrew();
-buildRDR();
 
 // ── Service Worker ───────────────────────────────────
 if ('serviceWorker' in navigator) {
