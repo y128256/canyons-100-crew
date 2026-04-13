@@ -31,9 +31,9 @@ This is a personal race planning workspace for the **Canyons 100** ultramarathon
 | AS3 | 24 | 7:00 PM | Friday | ✓ | — | Required crew stop |
 | AS4 | 30 | 9:00 PM | Friday | ✓ | ✓ | Required crew stop |
 | AS6 | 47.5 | 2:00 AM | Saturday | ✓ | — | Drive → AS9 after |
-| AS9 | 62.9 | 7:00 AM | Saturday | ✓ | ✓ | Required; Nina starts pacing here (Plan B only) |
-| AS10 | 75.1 | 11:00 AM | Saturday | ✓ | ✓ | Required; Nina starts pacing here (Plan A) or continues (Plan B) |
-| AS13+ | 95 | ~6:00 PM | Saturday | ✓ | — | Nina stops pacing → drives to finish |
+| AS9 | 62.9 | 7:00 AM | Saturday | ✓ | ✓ | Required; pacer starts here (Plan B only) |
+| AS10 | 75.1 | 11:00 AM | Saturday | ✓ | ✓ | Required; pacer starts here (Plan A) or continues (Plan B) |
+| AS13+ | 95 | ~6:00 PM | Saturday | ✓ | — | Pacer stops pacing → drives to finish |
 | Finish | ~101.8 | TBD | Saturday | ✓ | — | 🎉 |
 
 ### Pacing Plans
