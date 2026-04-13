@@ -656,6 +656,7 @@
               <th>Location</th>
               <th>Mi</th>
               <th>+Gain</th>
+              <th>−Loss</th>
               <th>Cut-Off</th>
               <th title="Drop Bag">DB</th>
               <th title="Crew">Crew</th>
@@ -666,7 +667,7 @@
         </table>
       </div>
       <p style="font-size:10px;color:var(--text2);margin-top:8px;text-align:center;">
-        Elevation gain shown to next station. Crew stops highlighted.
+        Elevation gain/loss shown to next station. Crew stops highlighted.
       </p>
     </section>
 
@@ -784,6 +785,7 @@ function buildASChart() {
   tbody.innerHTML = stations.map(s => {
     const cls = s.type === 'crew' ? 'crew-stop' : s.type === 'water' ? 'water-only' : s.type === 'finish' ? 'crew-stop' : '';
     const gain = s.gain != null ? '+' + s.gain.toLocaleString() : '—';
+    const loss = s.loss != null ? s.loss.toLocaleString() : '—';
     const cutoff = s.cutoff ? `<span style="color:var(--red);font-weight:700">${s.cutoff}</span>` : '—';
     const db   = s.db    ? '🎒' : '';
     const crew = s.crew  ? '👥' : '';
@@ -793,6 +795,7 @@ function buildASChart() {
       <td style="font-size:11px;color:var(--text2)">${s.loc}</td>
       <td style="font-weight:700">${s.mi}</td>
       <td style="font-size:12px;color:var(--green)">${gain}</td>
+      <td style="font-size:12px;color:var(--red)">${loss}</td>
       <td style="font-size:11px">${cutoff}</td>
       <td class="icon-cell">${db}</td>
       <td class="icon-cell">${crew}</td>
