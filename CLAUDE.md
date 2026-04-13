@@ -14,8 +14,7 @@ This is a personal race planning workspace for the **Canyons 100** ultramarathon
 
 | File | Purpose |
 |------|---------|
-| `Canyons Plan Ori.xlsx` | **Canonical** planning workbook — timeline, aid station chart, maps, elevation profile. **Do not modify.** |
-| `Canyons Plan - Crew Guide.xlsx` | Crew-focused version — Race Day Reference table, swim-lane timeline, same maps/elevation |
+| `Canyons Plan - Crew Guide.xlsx` | **Canonical** planning workbook — Race Day Reference table, swim-lane timeline, aid station chart, maps, elevation profile |
 | `2026_Canyons_Runner_Guide_rs_3_2edb98035d.pdf` | Official 2026 race runner guide |
 
 ## Race Summary
@@ -31,19 +30,18 @@ This is a personal race planning workspace for the **Canyons 100** ultramarathon
 | Start | 0 | 12:00 PM | Friday | ✓ | — | Send off runner |
 | AS3 | 24 | 7:00 PM | Friday | ✓ | — | Required crew stop |
 | AS4 | 30 | 9:00 PM | Friday | ✓ | ✓ | Required crew stop |
-| Optional AS | ~40 | 12:00 AM | Sat (midnight) | ○ | — | Optional meet |
 | AS6 | 47.5 | 2:00 AM | Saturday | ✓ | — | Drive → AS9 after |
 | AS9 | 62.9 | 7:00 AM | Saturday | ✓ | ✓ | Required; Nina starts pacing here (Plan B only) |
 | AS10 | 75.1 | 11:00 AM | Saturday | ✓ | ✓ | Required; Nina starts pacing here (Plan A) or continues (Plan B) |
-| AS13+ | 92.3 | ~6:00 PM | Saturday | ✓ | — | Nina stops pacing → drives to finish |
+| AS13+ | 95 | ~6:00 PM | Saturday | ✓ | — | Nina stops pacing → drives to finish |
 | Finish | ~101.8 | TBD | Saturday | ✓ | — | 🎉 |
 
 ### Pacing Plans
 
-- **Plan A (moderate)**: Nina starts pacing at AS10 (~11:00 AM Saturday)
-- **Plan B (fast)**: Nina starts pacing at AS9 (~7:00 AM Saturday)
+- **Plan A (moderate)**: Pacing startsat AS10 (~11:00 AM Saturday)
+- **Plan B (fast)**: Pacing startsat AS9 (~7:00 AM Saturday)
 
-Nina stops pacing at AS13+ (mi 92.3) and drives to the finish line.
+Pacing stops at AS13+ (~mi 95)
 
 ## Working with Excel Files
 
@@ -89,8 +87,6 @@ with zipfile.ZipFile(path, 'w', zipfile.ZIP_DEFLATED) as z:
 
 Sheet names in `Canyons Plan - Crew Guide.xlsx`: Race Day Reference, Timeline, Plan, Aid Station Chart, Map 1, Map 2, Map 3, Elevation Profile, To-Do Lists, Crew Access, Drop Bag Content.
 
-Sheet names in `Canyons Plan Ori.xlsx`: Plan, Aid Station Chart Pic, Aid Station Chart, Map 1, Map 2, Map 3, Elevation Profile.
-
 ## Correct Elevation Data (from `Canyons Plan - Crew Guide.xlsx` — Aid Station Chart sheet)
 
 These are the authoritative per-segment elevation figures. All future work should use these numbers.
@@ -98,6 +94,10 @@ These are the authoritative per-segment elevation figures. All future work shoul
 | Station | Location | Mile | Miles to Next | Gain to Next (ft) | Loss to Next (ft) | Cum. Gain | Cum. Loss |
 |---------|----------|------|--------------|-------------------|-------------------|-----------|-----------|
 | Start | China Wall | 0 | 10.1 | 1787 | -2870 | 1787 | -2870 |
+| AS1 | Deadwood-1 | 10.1 | 1.8 | 565 | -124 | 2352 | -2994 |
+| HS1 | Devils Thumb-1 | 12 | 1.6 | 0 | -1642 | 2352 | -4636 |
+| N/A | Swinging Bridge (Turnaround) | 13.5 | 1.6 | 1642 | 0 | 3994 | -4636 |
+| HS2 | Devils Thumb-2 | 15.1 | 3.2 | 283 | -724 | 4277 | -5360 |
 | AS2 | Deadwood-2 | 18.3 | 5.7 | 1774 | -2229 | 6051 | -7589 |
 | AS3 | Michigan Bluff | 24 | 5.9 | 1173 | -1367 | 7224 | -8956 |
 | AS4 | Foresthill | 30 | 8.3 | 725 | -2311 | 7949 | -11267 |
@@ -105,9 +105,13 @@ These are the authoritative per-segment elevation figures. All future work shoul
 | AS6 | Drivers Flat | 47.5 | 7.9 | 984 | -2050 | 10658 | -15044 |
 | AS7 | Mammoth Bar | 55.5 | 3.7 | 679 | -718 | 11337 | -15762 |
 | AS8 | Confluence | 59.1 | 0.8 | 189 | -184 | 11526 | -15946 |
+| HS3 | No Hands-1 (Water Only) | 59.9 | 3 | 1156 | -219 | 12682 | -16165 |
 | AS9 | Cool-1 | 62.9 | 1.7 | 70 | -158 | 12752 | -16323 |
+| HS4 | Coffer Dam-1 (Water Only) | 64.6 | 4.6 | 947 | -947 | 13699 | -17270 |
+| HS5 | Coffer Dam-2 (Water Only) | 69.1 | 5.9 | 708 | -620 | 14407 | -17890 |
 | AS10 | Cool-2 | 75.1 | 4.1 | 259 | -1020 | 14666 | -18910 |
 | AS11 | Browns Bar-1 | 79.2 | 5.5 | 947 | -261 | 15613 | -19171 |
 | AS12 | ALT | 84.7 | 7.6 | 675 | -1361 | 16288 | -20532 |
 | AS13 | Browns Bar-2 | 92.3 | 6.1 | 1009 | -1185 | 17297 | -21717 |
+| HS6 | No Hands-1 (Water Only) | 98.3 | 3.5 | 907 | -227 | 18204 | -21944 |
 | Finish | Downtown Auburn | 101.8 | — | — | — | — | — |
