@@ -682,7 +682,10 @@
 
     <!-- ═══════════════════ DROP BAG CONTENT ═══════════════════ -->
     <section id="tab-dropbag" class="tab-panel">
-      <p style="font-size:12px;color:var(--text2);margin-bottom:16px;">3 bags total. AS9 and AS10 share one bag at the same location.</p>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div style="font-size:12px;color:var(--text2);">Tap a bag to expand. Checks save automatically.</div>
+        <button class="reset-btn" onclick="resetAllDropBags()">Reset all</button>
+      </div>
       <div id="dropbag-container"></div>
     </section>
 
@@ -951,79 +954,105 @@ function resetAllTodos() {
 // ══════════════════════════════════════════════════════
 const dropBags = [
   {
-    title: 'AS4 — Foresthill  ·  Mile 30  ·  ~9 PM Friday',
+    id: 'db-as4',
+    label: 'AS4 — Foresthill',
+    sub: 'Mile 30  ·  ~9 PM Friday',
+    color: '#fb8c00',
     note: '',
-    categories: [
-      { name: 'Nutrition', items: [
-        ['Snacks', '1000 kcal'],
-      ]},
-      { name: 'Gear', items: [
-        ['Headlamp (fully charged)', 'primary — must have at dusk'],
-        ['Spare headlamp batteries', 'AA or AAA per your model'],
-        ['Backup headlamp', 'small and light'],
-        ['Light jacket / wind shell', 'temps drop sharply at night'],
-        ['Gloves, hat', 'liner weight is fine'],
-        ['Long-sleeve shirt', '×1'],
-        ['Fresh socks', '×1 pair  (wool preferred, e.g. Darn Tough)'],
-        ['insect repeller', ''],
-        ['Shoes', ''],
-      ]},
-      { name: 'Feet & Skin', items: [
-        ['Blister kit', 'needle, Leukotape, gauze, alcohol wipes'],
-        ['Baby wipes', '×5  (clean up, freshen up)'],
-      ]},
-      { name: 'Medical', items: [
-        ['Ibuprofen & Tylenol', '×4 tabs  (take with food)'],
-        ['Tums / antacids', 'nausea prevention'],
-        ['A&D', ''],
-      ]},
-    ]
+    items: [
+      'Snacks',
+      'Headlamp (fully charged)',
+      'Spare headlamp batteries',
+      'Backup headlamp',
+      'Light jacket / wind shell',
+      'Gloves, hat',
+      'Long-sleeve shirt',
+      'Fresh socks',
+      'Shoes',
+      'Blister kit',
+      'Baby wipes',
+      'Ibuprofen & Tylenol',
+      'Tums / antacids',
+      'A&D',
+      'Insect repeller',
+    ],
   },
   {
-    title: 'AS9 / AS10 — Cool  ·  Miles 62.9 & 75.1  ·  ~7–11 AM Saturday',
-    note: 'One bag stays at this location. Accessible at AS9 and again at AS10. Plan B: Pacer starts at AS9. Plan A: Pacer starts at AS10.',
-    categories: [
-      { name: 'Nutrition', items: [
-        ['Snacks', '1600 kcal'],
-      ]},
-      { name: 'Gear', items: [
-        ['Change of clothes + shoes', ''],
-        ['Fresh socks', ''],
-        ['Fresh shirt', ''],
-        ['Sunscreen', 'it\'s daylight by now'],
-        ['Sunglasses', ''],
-        ['Light long-sleeve', 'morning chill — easy layer to shed'],
-      ]},
-      { name: 'Feet & Skin', items: [
-        ['Full blister kit', 'needle, Leukotape, gauze, alcohol wipes'],
-        ['Anti-chafe', 'reapply thoroughly'],
-        ['Baby wipes', ''],
-      ]},
-      { name: 'Misc', items: [
-        ['Phone charger / battery pack', ''],
-        ['A&D', ''],
-      ]},
-    ]
+    id: 'db-as9',
+    label: 'AS9 / AS10 — Cool',
+    sub: 'Miles 62.9 & 75.1  ·  ~7–11 AM Saturday',
+    color: '#4d9de0',
+    note: 'One bag stays at this location. Accessible at AS9 and again at AS10.',
+    items: [
+      'Snacks',
+      'Change of clothes + shoes',
+      'Fresh socks',
+      'Fresh shirt',
+      'Sunscreen',
+      'Sunglasses',
+      'Light long-sleeve',
+      'Full blister kit',
+      'Anti-chafe',
+      'Baby wipes',
+      'Phone charger / battery pack',
+      'A&D',
+    ],
   },
 ];
 
 function buildDropBags() {
   const container = document.getElementById('dropbag-container');
-  container.innerHTML = dropBags.map(bag => `
-    <div class="card db-section">
-      <div class="db-section h3" style="font-size:14px;font-weight:700;padding:12px 14px;background:var(--bg3);border-bottom:1px solid var(--border)">${bag.title}</div>
-      ${bag.note ? `<div style="font-size:11px;color:var(--text2);padding:8px 14px;background:var(--bg2);border-bottom:1px solid var(--border);font-style:italic">${bag.note}</div>` : ''}
-      ${bag.categories.map(cat => `
-        <div class="db-category">${cat.name}</div>
-        ${cat.items.map(([name, qty]) => `
-          <div class="db-item">
-            <div class="db-item-name">${name}</div>
-            ${qty ? `<div class="db-item-qty">${qty}</div>` : ''}
-          </div>
-        `).join('')}
-      `).join('')}
-    </div>
-  `).join('');
+  container.innerHTML = dropBags.map(bag => {
+    const done = getDBChecked(bag.id);
+    const total = bag.items.length;
+    const count = done.filter(Boolean).length;
+    const pct = total ? Math.round(count / total * 100) : 0;
+    const items = bag.items.map((item, i) => {
+      const checked = done[i];
+      return `<div class="todo-item${checked ? ' done' : ''}" onclick="toggleDB('${bag.id}',${i},this)">
+        <div class="todo-check"></div>
+        <div class="todo-label">${item}</div>
+      </div>`;
+    }).join('');
+    return `<div class="todo-station" id="dbs-${bag.id}">
+      <div class="todo-progress-bar"><div class="todo-progress-bar-fill" style="width:${pct}%"></div></div>
+      <div class="todo-station-header" onclick="toggleDBStation('${bag.id}')">
+        <div style="width:10px;height:10px;border-radius:50%;background:${bag.color};flex-shrink:0"></div>
+        <h3>${bag.label}</h3>
+        <div class="progress">${count}/${total}</div>
+        <div class="chevron">▼</div>
+      </div>
+      <div class="todo-station-sub">${bag.sub}${bag.note ? '<br><span style="font-style:italic;color:var(--text2)">' + bag.note + '</span>' : ''}</div>
+      <div class="todo-items">${items}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleDBStation(id) {
+  document.getElementById('dbs-' + id).classList.toggle('open');
+}
+
+function getDBChecked(id) {
+  try { return JSON.parse(localStorage.getItem('db-' + id)) || []; } catch { return []; }
+}
+
+function toggleDB(id, idx, el) {
+  const arr = getDBChecked(id);
+  arr[idx] = !arr[idx];
+  localStorage.setItem('db-' + id, JSON.stringify(arr));
+  el.classList.toggle('done');
+  const bag = dropBags.find(b => b.id === id);
+  const count = arr.filter(Boolean).length;
+  const total = bag.items.length;
+  const card = document.getElementById('dbs-' + id);
+  card.querySelector('.progress').textContent = count + '/' + total;
+  card.querySelector('.todo-progress-bar-fill').style.width = Math.round(count / total * 100) + '%';
+}
+
+function resetAllDropBags() {
+  if (!confirm('Reset all drop bag checkboxes?')) return;
+  dropBags.forEach(b => localStorage.removeItem('db-' + b.id));
+  buildDropBags();
 }
 
 // ══════════════════════════════════════════════════════
