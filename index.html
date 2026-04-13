@@ -1201,15 +1201,15 @@ function buildCrew() {
 // ── Race Day Reference Data & Builder ────────────────
 // ══════════════════════════════════════════════════════
 const rdrRows = [
-  { as:'Start',              mi:0,     arrival:'12:00 PM', day:'Friday',       crew:'✓', db:'—',    action:'Send off runner',  pacer:null },
-  { as:'AS3  ·  mi 24',     mi:24,    arrival:'6:00 PM',  day:'Friday',       crew:'✓', db:'—',    action:'★ Meet at AS',     pacer:null },
-  { as:'AS4  ·  mi 30',     mi:30,    arrival:'8:00 PM',  day:'Friday',       crew:'✓', db:'✓ DB', action:'★ Meet at AS',     pacer:null },
-  { as:'Optional AS  ·  ~mi 40', mi:'~40', arrival:'12:00 AM', day:'Sat (midnight)', crew:'○', db:'—', action:'○ Optional meet', pacer:null },
-  { as:'AS6  ·  mi 47.5',   mi:47.5,  arrival:'1:00 AM',  day:'Saturday',     crew:'✓', db:'—',    action:'Drive → AS9',      pacer:null },
-  { as:'AS9  ·  mi 62.9',   mi:62.9,  arrival:'5–8 AM',   day:'Saturday',     crew:'✓', db:'✓ DB', action:'★ Meet at AS',     pacer:'Plan B (fast): Nina starts pacing ~6:00 AM' },
-  { as:'AS10  ·  mi 75.1',  mi:75.1,  arrival:'10:00 AM', day:'Saturday',     crew:'✓', db:'✓ DB', action:'★ Meet at AS',     pacer:'Plan A (mod): Nina starts pacing ~10:00 AM\nPlan B: Nina continues pacing' },
-  { as:'AS13+  ·  mi 92.3', mi:92.3,  arrival:'~5:00 PM', day:'Saturday',     crew:'✓', db:'—',    action:'★ Drive → Finish', pacer:'Nina stops pacing → drives to finish' },
-  { as:'FINISH',             mi:101.8, arrival:'TBD',      day:'Saturday',     crew:'✓', db:'—',    action:'🎉 Celebrate!',    pacer:null },
+  { as:'Start',        mi:0,      arrival:'12:00 PM', day:'Friday',        crew:'✓', db:'—', action:'Send off runner' },
+  { as:'AS3',          mi:24,     arrival:'6:00 PM',  day:'Friday',        crew:'✓', db:'—', action:'Required crew stop' },
+  { as:'AS4',          mi:30,     arrival:'8:00 PM',  day:'Friday',        crew:'✓', db:'✓', action:'Required crew stop' },
+  { as:'Optional AS',  mi:'~40',  arrival:'12:00 AM', day:'Sat (midnight)',crew:'○', db:'—', action:'Optional meet' },
+  { as:'AS6',          mi:47.5,   arrival:'1:00 AM',  day:'Saturday',      crew:'✓', db:'—', action:'Drive → AS9 after' },
+  { as:'AS9',          mi:62.9,   arrival:'5–8 AM',   day:'Saturday',      crew:'✓', db:'✓', action:'Required; Nina starts pacing here (Plan B only)' },
+  { as:'AS10',         mi:75.1,   arrival:'10:00 AM', day:'Saturday',      crew:'✓', db:'✓', action:'Required; Nina starts pacing here (Plan A) or continues (Plan B)' },
+  { as:'AS13+',        mi:92.3,   arrival:'~5:00 PM', day:'Saturday',      crew:'✓', db:'—', action:'Nina stops pacing → drives to finish' },
+  { as:'Finish',       mi:'~101.8',arrival:'TBD',     day:'Saturday',      crew:'✓', db:'—', action:'🎉' },
 ];
 
 function buildRDR() {
@@ -1219,9 +1219,8 @@ function buildRDR() {
     const isOptional = r.crew === '○';
     const hasDB = r.db !== '—';
     const rowBg = isFinish ? 'rgba(67,160,71,0.1)' : isOptional ? 'rgba(251,140,0,0.08)' : hasDB ? 'rgba(255,193,7,0.07)' : i % 2 === 0 ? 'rgba(255,255,255,0.02)' : '';
-    const pacer = r.pacer ? `<div style="font-size:10px;color:var(--accent2);margin-top:3px;white-space:pre-line;">${r.pacer}</div>` : '';
     return `<tr style="background:${rowBg};border-bottom:1px solid rgba(255,255,255,0.05);">
-      <td style="padding:8px 8px;font-weight:600;font-size:12px;">${r.as}${pacer}</td>
+      <td style="padding:8px 8px;font-weight:600;font-size:12px;">${r.as}</td>
       <td style="padding:8px 6px;text-align:center;color:var(--text2);">${r.mi}</td>
       <td style="padding:8px 6px;text-align:center;white-space:nowrap;font-weight:600;">${r.arrival}</td>
       <td style="padding:8px 6px;text-align:center;color:var(--text2);font-size:11px;white-space:nowrap;">${r.day}</td>
